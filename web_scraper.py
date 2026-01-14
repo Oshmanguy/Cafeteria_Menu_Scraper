@@ -31,15 +31,18 @@ def getSpecificDay(soup, day_of_week):
 
 
 def getMealItems(soup, meal):
+   
 
-    #get h3 tag that holds title of meal  (then we can get everything within h3)
-    #TODO: FIX THIS STUPID THURSDAY BUG, SOMTHING IS DIFFRENT BUT I DONT KNOW WHAT 
-    if meal == "Thursday":
-        #this is stupid as hell
-        meal_h3 = soup.find('h3', string = "&#160;" + meal)
-    else:
-        meal_h3 = soup.find('h3', string = meal)
-    
+    #make get all h3 tags and strip the text in them 
+    for h3 in soup.find_all("h3"):
+       h3_text = h3.get_text(strip = True)
+
+       #see if the stripped text equals a meal (LUNCH or SUPPER)
+       if h3_text == meal:
+           meal_h3 = h3 
+           break
+
+    #if LUNCH or SUPPER does not exist then we return empty list and print that the meal was not found
     if not meal_h3:
         print("NO " + meal + " found")
         return []
@@ -89,10 +92,6 @@ for day in days_of_week:
     #save entry to dict with key being day of week and keys being list of lists (lunch and supper)
     meal_database[day] = {"lunch": getMealItems(specific_day_soup, "LUNCH"),
                           "supper": getMealItems(specific_day_soup, "SUPPER")}
-
-
-    print("==================================================================================================")
-    print(day)
 
 
 
