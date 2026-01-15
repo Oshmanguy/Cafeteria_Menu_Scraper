@@ -10,6 +10,12 @@
 from bs4 import BeautifulSoup
 import requests
 
+#TODO: get day of the week and current date along with week number to construct url 
+#NOTE: URL only needs to change on sunday probably at night maybe anything after 10pm
+
+
+
+
 #save url to variable 
 web_url = "https://culinaryservices.usask.ca/marquis-culinary-centre/week-2-january12-18-2026.php"
 
@@ -29,6 +35,8 @@ def getSpecificDay(soup, day_of_week):
     #return contents for that specific day 
     return soup_day
 
+
+#TODO: fix this function so that I an get brunch and supper for Saturday and Sunday
 
 def getMealItems(soup, meal):
    
@@ -107,6 +115,7 @@ def readableMeal(meal_dict, day_of_week):
 
 #MAIN PROGRAM -----------------------------------------------------
 
+#TODO: get rid of most of this and make it so that it only sends the url once depending on the day
 
 #days of week list
 days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
