@@ -72,11 +72,13 @@ def getMealItems(soup, meal):
     return meal_items
 
 def readableMeal(meal_dict, day_of_week):
-   
+
+    #define string
+    formated_day = "==========" + day_of_week + "=========\n\n"
+
     #FIRST DO LUNCH MEALS===========================
 
-    #define starting string empty string  
-    formated_day = "----------LUNCH----------\n\n"
+    formated_day += "----------LUNCH----------\n\n"
 
     #create internal dict to loop through 
     internal_dict_lunch = meal_dict[day_of_week]["lunch"]
@@ -121,7 +123,6 @@ for day in days_of_week:
     #save entry to dict with key being day of week and keys being list of lists (lunch and supper)
     meal_database[day] = {"lunch": getMealItems(specific_day_soup, "LUNCH"),
                           "supper": getMealItems(specific_day_soup, "SUPPER")}
+    print()#TESTING
+    print(readableMeal(meal_database, day))
 
-print(readableMeal(meal_database, days_of_week[0]))
-
-#print(meal_database)
