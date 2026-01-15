@@ -71,8 +71,37 @@ def getMealItems(soup, meal):
     #return list of lunch items
     return meal_items
 
-#create a dict that which values contain a list containg meals for that meal time
+def readableMeal(meal_dict, day_of_week):
+   
+    #FIRST DO LUNCH MEALS===========================
 
+    #define starting string empty string  
+    formated_day = "----------LUNCH----------\n\n"
+
+    #create internal dict to loop through 
+    internal_dict_lunch = meal_dict[day_of_week]["lunch"]
+    
+    #loop through items in dict and add them to string 
+    for meal in internal_dict_lunch:
+        formated_day +=  meal + "\n\n"
+
+    formated_day += "\n"
+        
+    #SUPPER===========================================
+
+    #just add on to original formatted string
+    formated_day += "----------SUPPER----------\n\n"
+
+    #create internal dict to loop thorugh (the list, is a value in the dict)
+    internal_dict_supper = meal_dict[day_of_week]["supper"]
+
+
+    #loop through iteems for supper of that day and add to string
+    for meal in internal_dict_supper:
+        formated_day += meal + "\n\n"
+
+    #returns formated string with everything for that day
+    return formated_day
 
 #MAIN PROGRAM -----------------------------------------------------
 
@@ -93,6 +122,6 @@ for day in days_of_week:
     meal_database[day] = {"lunch": getMealItems(specific_day_soup, "LUNCH"),
                           "supper": getMealItems(specific_day_soup, "SUPPER")}
 
+print(readableMeal(meal_database, days_of_week[0]))
 
-
-print(meal_database)
+#print(meal_database)
