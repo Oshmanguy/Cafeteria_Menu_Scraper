@@ -172,34 +172,20 @@ beautiful_page_contents = BeautifulSoup(web_page.text, "html.parser")
 
 
 
-
-
-
-
-
-
-#TODO: get rid of most of this and make it so that it only sends the url once depending on the day
-
-
-
-#days of week list
-days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-
 #database that will hold supper and lunch lists for all days of the week
 meal_database = {}
 
-#loop through each day of the week
-for day in days_of_week:
    
-    #get all meal html for that day (under certain div id)
-    specific_day_soup  = getSpecificDay(beautiful_page_contents, day)
+#get all meal html for that day (under certain div id)
+specific_day_soup  = getSpecificDay(beautiful_page_contents, day_of_week_name)
     
-    #save entry to dict with key being day of week and keys being list of lists (lunch and supper)
-    meal_database[day] = {"brunch": getMealItems(specific_day_soup, "BRUNCH"),
-                          "lunch": getMealItems(specific_day_soup, "LUNCH"),
-                          "supper": getMealItems(specific_day_soup, "SUPPER")
-                         }
-    print(readableMeal(meal_database, day))
+#save entry to dict with key being day of week and keys being list of lists (lunch and supper)
+meal_database[day_of_week_name] = {"brunch": getMealItems(specific_day_soup, "BRUNCH"),
+                      "lunch": getMealItems(specific_day_soup, "LUNCH"),
+                      "supper": getMealItems(specific_day_soup, "SUPPER")
+                     }
 
+data = {"content": readableMeal(meal_database, day_of_week_name)}
 
+print(data)
 
