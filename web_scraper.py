@@ -41,11 +41,19 @@ def getSpecificDay(soup, day_of_week):
 def getMealItems(soup, meal):
    
 
+    if (soup != "WeeklyMenu-Saturday" or soup != "WeeklyMenu-Sunday") and meal == "BRUNCH":
+        meal_h3 = False
+
+
+
+
+
     #make get all h3 tags and strip the text in them 
     for h3 in soup.find_all("h3"):
        h3_text = h3.get_text(strip = True)
+       print(h3_text)#TESTING
 
-       #see if the stripped text equals a meal (LUNCH or SUPPER)
+       #see if the stripped text equals a meal (BRUNCH, LUNCH or SUPPER)
        if h3_text == meal:
            meal_h3 = h3 
            break
@@ -84,6 +92,29 @@ def readableMeal(meal_dict, day_of_week):
     #define string
     formated_day = "==========" + day_of_week + "=========\n\n"
 
+
+    #check if saturday or Sunday (BRUNCH on these days)
+    if day_of_week == "Saturday" or day_of_week == "Sunday":
+
+
+        formated_day += "----------BRUNCH----------\n\n"
+
+        #create internal dict to loop through 
+        internal_dict_brunch = meal_dict[day_of_week]["brunch"]
+
+        #loop through items in dict and add them to string 
+        for meal in internal_dict_lunch:
+            formated_day += meal + "\n\n\n"
+
+        
+
+
+
+
+
+
+
+
     #FIRST DO LUNCH MEALS===========================
 
     formated_day += "----------LUNCH----------\n\n"
@@ -118,7 +149,7 @@ def readableMeal(meal_dict, day_of_week):
 #TODO: get rid of most of this and make it so that it only sends the url once depending on the day
 
 #days of week list
-days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 #database that will hold supper and lunch lists for all days of the week
 meal_database = {}
@@ -130,8 +161,10 @@ for day in days_of_week:
     specific_day_soup  = getSpecificDay(beautiful_page_contents, day)
     
     #save entry to dict with key being day of week and keys being list of lists (lunch and supper)
-    meal_database[day] = {"lunch": getMealItems(specific_day_soup, "LUNCH"),
-                          "supper": getMealItems(specific_day_soup, "SUPPER")}
+    meal_database[day] = {"brunch": getMealItems(specific_day_soup, "BRUNCH"),
+                          "lunch": getMealItems(specific_day_soup, "LUNCH"),
+                          "supper": getMealItems(specific_day_soup, "SUPPER")
+                         }
     print()#TESTING
     print(readableMeal(meal_database, day))
 
