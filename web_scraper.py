@@ -9,20 +9,50 @@
 #imports
 from bs4 import BeautifulSoup
 import requests
+from datetime import date, datetime, timedelta 
 
 #TODO: get day of the week and current date along with week number to construct url 
 #NOTE: URL only needs to change on sunday probably at night maybe anything after 10pm
 
 
+#to make the url we need day of week name, month name, date number, year
+#will have format: "week-<WEEK-NUMBER>-<MONTH-NAME>-<MONDAYS-DATE-NUM>-<SUNDAYS-DATE-NUM>-<YEAR>"
+
+#get month name 
+today = date.today()
+#Internation Organization for Standardization (holds dates, times, etc)
+iso = today.isocalendar()
+
+#save month name to var and make it lowercase
+full_month_name = today.strftime("%B").lower()
+
+#get Monday and Sunday date for url
+monday = today - timedelta(days=today.weekday())
+sunday = monday + timedelta(days=6)
+
+monday_date = monday.day
+sunday_date = sunday.day
+
+#get todays year 
+year = iso.year
+
+#get week number
+week_num = iso.week
+week_num -= 1 #need to "go back a week" becuase website is behind a week for some reason
 
 
-#save url to variable 
-web_url = "https://culinaryservices.usask.ca/marquis-culinary-centre/week-2-january12-18-2026.php"
+#create URL using todays week and dates
+web_url = f"https://culinaryservices.usask.ca/marquis-culinary-centre/week-{week_num}-{full_month_name}{monday_date}-{sunday_date}-{year}.php"
+
+
+print(web_url)#TESTING
+
 
 #get contents of web_url at reuqest time and save to varaible 
 web_page = requests.get(web_url)
 
 beautiful_page_contents = BeautifulSoup(web_page.text, "html.parser")
+
 
 #print(beautiful_page_contents.find_all('div', id = "WeeklyMenu-Monday"))
 
@@ -35,8 +65,6 @@ def getSpecificDay(soup, day_of_week):
     #return contents for that specific day 
     return soup_day
 
-
-#TODO: fix this function so that I an get brunch and supper for Saturday and Sunday
 
 def getMealItems(soup, meal):
    
@@ -106,13 +134,6 @@ def readableMeal(meal_dict, day_of_week):
 
         
 
-
-
-
-
-
-
-
     #FIRST DO LUNCH MEALS===========================
 
     formated_day += "----------LUNCH----------\n\n"
@@ -146,6 +167,8 @@ def readableMeal(meal_dict, day_of_week):
 
 #TODO: get rid of most of this and make it so that it only sends the url once depending on the day
 
+
+
 #days of week list
 days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
@@ -164,5 +187,6 @@ for day in days_of_week:
                           "supper": getMealItems(specific_day_soup, "SUPPER")
                          }
     print(readableMeal(meal_database, day))
+
 
 
