@@ -40,18 +40,19 @@ def getSpecificDay(soup, day_of_week):
 
 def getMealItems(soup, meal):
    
-
+    #only look for brunch on saturday and sunday
     if (soup != "WeeklyMenu-Saturday" or soup != "WeeklyMenu-Sunday") and meal == "BRUNCH":
-        meal_h3 = False
+        return []
 
-
-
+    #always initalize this to none to avoid errors 
+    meal_h3 = None 
 
 
     #make get all h3 tags and strip the text in them 
     for h3 in soup.find_all("h3"):
        h3_text = h3.get_text(strip = True)
        print(h3_text)#TESTING
+
 
        #see if the stripped text equals a meal (BRUNCH, LUNCH or SUPPER)
        if h3_text == meal:
@@ -103,7 +104,7 @@ def readableMeal(meal_dict, day_of_week):
         internal_dict_brunch = meal_dict[day_of_week]["brunch"]
 
         #loop through items in dict and add them to string 
-        for meal in internal_dict_lunch:
+        for meal in internal_dict_brunch:
             formated_day += meal + "\n\n\n"
 
         
@@ -165,6 +166,6 @@ for day in days_of_week:
                           "lunch": getMealItems(specific_day_soup, "LUNCH"),
                           "supper": getMealItems(specific_day_soup, "SUPPER")
                          }
-    print()#TESTING
     print(readableMeal(meal_database, day))
+
 
