@@ -11,51 +11,6 @@ from bs4 import BeautifulSoup
 import requests
 from datetime import date, datetime, timedelta 
 
-#TODO: get day of the week and current date along with week number to construct url 
-#NOTE: URL only needs to change on sunday probably at night maybe anything after 10pm
-
-
-#to make the url we need day of week name, month name, date number, year
-#will have format: "week-<WEEK-NUMBER>-<MONTH-NAME>-<MONDAYS-DATE-NUM>-<SUNDAYS-DATE-NUM>-<YEAR>"
-
-#get month name 
-today = date.today()
-#Internation Organization for Standardization (holds dates, times, etc)
-iso = today.isocalendar()
-
-#save month name to var and make it lowercase
-full_month_name = today.strftime("%B").lower()
-
-#get Monday and Sunday date for url
-monday = today - timedelta(days=today.weekday())
-sunday = monday + timedelta(days=6)
-
-monday_date = monday.day
-sunday_date = sunday.day
-
-#get todays year 
-year = iso.year
-
-#get week number
-week_num = iso.week
-week_num -= 1 #need to "go back a week" becuase website is behind a week for some reason
-
-
-#create URL using todays week and dates
-web_url = f"https://culinaryservices.usask.ca/marquis-culinary-centre/week-{week_num}-{full_month_name}{monday_date}-{sunday_date}-{year}.php"
-
-
-print(web_url)#TESTING
-
-
-#get contents of web_url at reuqest time and save to varaible 
-web_page = requests.get(web_url)
-
-beautiful_page_contents = BeautifulSoup(web_page.text, "html.parser")
-
-
-#print(beautiful_page_contents.find_all('div', id = "WeeklyMenu-Monday"))
-
 
 def getSpecificDay(soup, day_of_week):
 
@@ -164,6 +119,64 @@ def readableMeal(meal_dict, day_of_week):
     return formated_day
 
 #MAIN PROGRAM -----------------------------------------------------
+
+
+
+#NOTE: URL only needs to change on sunday probably at night maybe anything after 10pm                                                                                                                                                                                                           #to make the url we need day of week name, month name, date number, year#will have format: "week-<WEEK-NUMBER>-<MONTH-NAME>-<MONDAYS-DATE-NUM>-<SUNDAYS-DATE-NUM>-<YEAR>"
+
+#get month name
+today = date.today()
+#Internation Organization for Standardization (holds dates, times, etc)
+iso = today.isocalendar()
+
+#get todays day of week name
+day_of_week_name = today.strftime("%A")
+
+
+#save month name to var and make it lowercase
+full_month_name = today.strftime("%B").lower()
+
+#get Monday and Sunday date for url
+monday = today - timedelta(days=today.weekday())
+sunday = monday + timedelta(days=6)
+
+monday_date = monday.day
+sunday_date = sunday.day
+
+#get todays year
+year = iso.year                                                                                                                                 
+#get week num
+week_num = iso.week
+week_num -= 1 #have to go back a week since website is behind 
+
+
+#create URL using todays week and dates
+web_url = f"https://culinaryservices.usask.ca/marquis-culinary-centre/week-{week_num}-{full_month_name}{monday_date}-{sunday_date}-{year}.php"
+
+
+print(web_url)#TESTING
+
+
+#get contents of web_url at reuqest time and save to varaible
+web_page = requests.get(web_url)
+
+beautiful_page_contents = BeautifulSoup(web_page.text, "html.parser")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #TODO: get rid of most of this and make it so that it only sends the url once depending on the day
 
