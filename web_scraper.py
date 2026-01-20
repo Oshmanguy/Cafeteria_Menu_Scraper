@@ -9,6 +9,8 @@
 #imports
 from bs4 import BeautifulSoup
 import requests
+import os
+import json
 from datetime import date, datetime, timedelta 
 
 
@@ -118,11 +120,35 @@ def readableMeal(meal_dict, day_of_week):
     #returns formated string with everything for that day
     return formated_day
 
+
+def send_to_discord(message: str):
+
+    #you will have to use your own webhoot here, I have mine saved as an enviornment variable
+    webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
+
+    #raise error if no webhook_url of if the url does not work
+    if not webhook_url:
+        raise RuntimeError("DISCORD_WEBHOOK_URL not set")
+
+    #JSON payload 
+    payload = {
+        "content": message
+    }
+
+    r = requests.post(webhook_url, json=payload)
+    r.raise_for_status()
+
+#helper function for send_to_discord 
+def send_long_message(text):
+    MAX = 1900 #max is 2000
+    chunks = [text[i:i+MAX] for i in range(0, len(text), MAX)]
+
+    #send over chunks
+    for chunk in chunks:
+        send_to_discord(chunk)
+
+
 #MAIN PROGRAM -----------------------------------------------------
-
-
-
-#NOTE: URL only needs to change on sunday probably at night maybe anything after 10pm                                                                                                                                                                                                           #to make the url we need day of week name, month name, date number, year#will have format: "week-<WEEK-NUMBER>-<MONTH-NAME>-<MONDAYS-DATE-NUM>-<SUNDAYS-DATE-NUM>-<YEAR>"
 
 #get month name
 today = date.today()
@@ -158,18 +184,13 @@ print(web_url)#TESTING
 
 
 #get contents of web_url at reuqest time and save to varaible
-web_page = requests.get(web_url)
+web_page = requests.get(web_url, timeout=10)
+
+#raise error if the url can not be reached 
+if web_page.status_code != 200:
+    raise RuntimeError("Failed to fetch menu page")
 
 beautiful_page_contents = BeautifulSoup(web_page.text, "html.parser")
-
-
-
-
-
-
-
-
-
 
 
 #database that will hold supper and lunch lists for all days of the week
@@ -185,7 +206,7 @@ meal_database[day_of_week_name] = {"brunch": getMealItems(specific_day_soup, "BR
                       "supper": getMealItems(specific_day_soup, "SUPPER")
                      }
 
-data = {"content": readableMeal(meal_database, day_of_week_name)}
 
-print(data)
+#send out payload o7
+send_long_message(readableMeal(meal_database, day_of_week_name))
 
