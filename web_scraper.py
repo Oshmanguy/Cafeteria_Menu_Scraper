@@ -11,8 +11,12 @@ from bs4 import BeautifulSoup
 import requests
 import os
 import json
+from dotenv import load_dotenv
 from datetime import date, datetime, timedelta 
 
+
+#load enviornment variables so cron can see webhook url 
+load_dotenv()
 
 def getSpecificDay(soup, day_of_week):
 
